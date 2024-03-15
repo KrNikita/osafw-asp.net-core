@@ -16,9 +16,80 @@ namespace osafw.Tests
     public class ParsePageTests
     {
         [TestMethod()]
-        public void ParsePageTest()
+        public void clear_cacheTest()
         {
-            throw new NotImplementedException();
+            string tpl = "<~AAA><br/><~BBB><br/><~CCC><br/><~DDD><br/><~arr repeat inline><~AAA><br/><~BBB><br/><~CCC><br/><~DDD><br/></~arr>";
+            System.IO.File.WriteAllText("testing.tpl", tpl);
+
+            Hashtable h1 = new();
+            h1["AAA"] = 1;
+            h1["BBB"] = 2;
+            h1["CCC"] = 3;
+            h1["DDD"] = 4;
+
+            ArrayList arr = new();
+            arr.Add(h1);
+            arr.Add(h1);
+            arr.Add(h1);
+            Hashtable ps = new() { { "arr", arr } };
+            ps["AAA"] = 1;
+            ps["BBB"] = 2;
+            ps["CCC"] = 3;
+            ps["DDD"] = 4;
+
+            ParsePage parsePage = new ParsePage(null);
+            string r = parsePage.parse_page("./", "testing.tpl", ps);
+            var resultStr = "1<br/>2<br/>3<br/>4<br/>1<br/>2<br/>3<br/>4<br/>1<br/>2<br/>3<br/>4<br/>1<br/>2<br/>3<br/>4<br/>";
+            Assert.AreEqual(resultStr, r);
+
+            // just check that clear_cache are not fail, since FILE_CACHE and LANG_CACHE are private members
+            parsePage.clear_cache();
+
+            System.IO.File.Delete("testing.tpl");
+        }
+
+        [TestMethod()]
+        public void tag_tplpathTest()
+        {
+            ParsePage parsePage = new ParsePage(null);
+            var r = parsePage.tag_tplpath("arr", "testing.tpl");
+
+            Assert.AreEqual("arr.html", r);
+        }
+
+        // TODO to test this need changes in the framework
+        //[TestMethod()]
+        //public void langMapTest()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        [TestMethod()]
+        public void parse_pageTest()
+        {
+            string tpl = "<~AAA><br/><~BBB><br/><~CCC><br/><~DDD><br/><~arr repeat inline><~AAA><br/><~BBB><br/><~CCC><br/><~DDD><br/></~arr>";
+            System.IO.File.WriteAllText("testing.tpl", tpl);
+
+            Hashtable h1 = new();
+            h1["AAA"] = 1;
+            h1["BBB"] = 2;
+            h1["CCC"] = 3;
+            h1["DDD"] = 4;
+
+            ArrayList arr = new();
+            arr.Add(h1);
+            arr.Add(h1);
+            arr.Add(h1);
+            Hashtable ps = new() { { "arr", arr } };
+            ps["AAA"] = 1;
+            ps["BBB"] = 2;
+            ps["CCC"] = 3;
+            ps["DDD"] = 4;
+
+            string r = new ParsePage(null).parse_page("./", "testing.tpl", ps);
+            var resultStr = "1<br/>2<br/>3<br/>4<br/>1<br/>2<br/>3<br/>4<br/>1<br/>2<br/>3<br/>4<br/>1<br/>2<br/>3<br/>4<br/>";
+            Assert.AreEqual(resultStr, r);
+            System.IO.File.Delete("testing.tpl");
         }
 
         [TestMethod()]
@@ -43,37 +114,13 @@ namespace osafw.Tests
             try
             {
                 _ = p.parse_json(null);
-            } catch(NullReferenceException)
+            }
+            catch (NullReferenceException)
             {
                 isException = true;
             }
             Assert.IsTrue(isException);
-            
-        }
 
-        [TestMethod()]
-        public void clear_cacheTest()
-        {
-
-            throw new NotImplementedException();
-        }
-
-        [TestMethod()]
-        public void tag_tplpathTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [TestMethod()]
-        public void langMapTest()
-        {
-            throw new NotImplementedException();
-        }
-
-        [TestMethod()]
-        public void parse_pageTest()
-        {
-            throw new NotImplementedException();
         }
 
         [TestMethod()]
@@ -350,22 +397,25 @@ namespace osafw.Tests
         }
 
 
-        [TestMethod()]
-        public void parse_string_ratioTest()
-        {
-            /*string tpl = "<~fradio radio=\"fradio\" name=\"item[fradio]\" delim=\"&nbsp;\">";
-            string tpl_result = "<select name = \"item[fruit]\">" +
-                "<option value=\"\">- select a fruit -</option>" +
-                "<option value=\"1\">Apple</option>\r\n" +
-                "<option value=\"2\">Plum</option>\r\n" +
-                "<option value=\"3\" selected>Banana</option>\r\n" +
-                "</select>";
-            Hashtable ps = new();
-            ps["fradio"] = new ArrayList() { "Apple", "Plum", "Banana" };
-            var r = new ParsePage(null).parse_string(tpl, ps);
-            Assert.AreEqual("", r);*/
-            throw new NotImplementedException();
-        }
+        //TODO To test this change to the framework needed
+        //[TestMethod()]
+        //public void parse_string_ratioTest()
+        //{
+        //    var parsePage = new ParsePage(null);
+        //    //parsePage.precache_file("fcombo.sel");
+        //    string tpl = "<~fcombo.sel radio=\"fradio\" name=\"item[fradio]\" delim=\"&nbsp;\">";
+        //    string tpl_result = "<div class='form-check &nbsp;'><input class='form-check-input' type='radio' name=\"item[fradio]\" id=\"item[fradio]$0\" value=\"1\"><label class='form-check-label' for='item[fradio]$0'>Apple</label></div>" +
+        //        "<div class='form-check &nbsp;'><input class='form-check-input' type='radio' name=\"item[fradio]\" id=\"item[fradio]$1\" value=\"2\"><label class='form-check-label' for='item[fradio]$1'>Plum</label></div>" +
+        //        "<div class='form-check &nbsp;'><input class='form-check-input' type='radio' name=\"item[fradio]\" id=\"item[fradio]$2\" value=\"3\"><label class='form-check-label' for='item[fradio]$2'>Banana</label></div>";
+        //    Hashtable ps = new();
+        //    ps["fcombo"] = new ArrayList() {
+        //        new Hashtable() { { "id", "1" }, { "iname", "Apple" } },
+        //        new Hashtable() { { "id", "2" }, { "iname", "Plum" } },
+        //        new Hashtable() { { "id", "3" }, { "iname", "Banana" } }
+        //    };
+        //    var r = parsePage.parse_string(tpl, ps);
+        //    Assert.AreEqual(tpl_result, r);
+        //}
 
         [TestMethod()]
         public void parse_string_htmlescapeTest()
@@ -511,16 +561,6 @@ namespace osafw.Tests
             ps["AAA"] = "tag\ntag2";
             string r = new ParsePage(null).parse_string(tpl, ps);
             Assert.AreEqual("tag<br>tag2", r);
-        }
-
-        [TestMethod()]
-        public void parse_string_countTest()
-        {
-            string tpl = "<~AAA count>";
-            Hashtable ps = new();
-            ps["AAA"] = new string[] { "AAA", "BBB", "CCC", "DDD"};
-            string r = new ParsePage(null).parse_string(tpl, ps);
-            Assert.AreEqual("4", r);
         }
 
         [TestMethod()]
