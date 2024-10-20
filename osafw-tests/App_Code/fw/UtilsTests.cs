@@ -83,14 +83,12 @@ namespace osafw.Tests
             Utils.hashFilter(h, keys);
 
             Assert.AreEqual(h.Keys.Count, 2);
-            Assert.IsTrue(h.Contains("AAA"));
-            Assert.IsTrue(h.Contains("BBB"));
-            Assert.AreEqual(h["AAA"], "1");
-            Assert.AreEqual(h["BBB"], "2");
-            Assert.IsFalse(h.Contains("CCC"));
-            Assert.IsFalse(h.Contains("DDD"));
-
-            throw new NotImplementedException();
+            Assert.IsFalse(h.Contains("AAA"));
+            Assert.IsFalse(h.Contains("BBB"));
+            Assert.AreEqual(h["CCC"], 3);
+            Assert.AreEqual(h["DDD"], null);
+            Assert.IsTrue(h.Contains("CCC"));
+            Assert.IsTrue(h.Contains("DDD"));
         }
 
         [TestMethod()]
